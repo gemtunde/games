@@ -3,10 +3,58 @@ import './TicTacToe.css'
 
 const TicTacToe = () => {
     const [turn, setTurn] = useState('x');
+    const [winner, setWinner] = useState();
     const [cells, setCells] = useState(Array(9).fill(''));
 
+    const checkWinner = (squares)=> {
+        let combos = {
+            across : [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+            ],
+            down: [
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+            ],
+            diagonal: [
+                [0, 4, 8],
+                [2, 4, 6],
+            ],
+        };
+        for(let combo in combos){
+           // console.log(combo);
+           // console.log(combos[combo]);
+            combos[combo].forEach((pattern)=>{
+               // console.log(pattern)
+               // console.log(pattern[0])
+               console.log(squares[pattern[0]]);
+
+              if(
+                squares[pattern[0]] === '' ||
+                squares[pattern[1]] === '' ||
+                squares[pattern[2]] === ''                
+                ){
+                    //do nothing
+                }else if(
+                     squares[pattern[0]] ===  squares[pattern[1]] &&
+                     squares[pattern[1]] ===  squares[pattern[2]]
+                ){
+                         //do something
+                         setWinner(squares[pattern[0]] )
+                }
+
+            })
+        }
+    };
+
     const handleClick = (number) => {
-        let squares = [...cells]
+        let squares = [...cells];
+        if(squares[number] !== ''){
+            alert('its already been clicked');
+            return
+        }
                 
         if (turn === 'x'){
             squares[number] = 'x';
@@ -16,14 +64,16 @@ const TicTacToe = () => {
               squares[number] = 'o';
             setTurn('x')
            }
-           console.log(squares)
+           setCells(squares);
+           checkWinner(squares)
+          // console.log(squares)
         
     }
 
     const Cell = ({num}) => {
 
         return(
-            <td onClick={()=>handleClick(num)}>--</td>
+            <td onClick={()=>handleClick(num)}>{cells[num]}</td>
         )
     }
   return (
@@ -49,6 +99,14 @@ const TicTacToe = () => {
                 </tr>
             </tbody>
         </table>
+        {
+            winner && (
+                <>
+                <p>{winner} is the winner</p>
+                <button>ReStart</button>
+                </>
+            )
+        }
     </div>
   )
 }
